@@ -60,9 +60,30 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 	
-	public void updateDates(Date checkIn, Date checkOut) {
+	public String updateDates(Date checkIn, Date checkOut) {
+		
+		Date now = new Date();
+		if (checkIn.before(now) || checkOut.before(now)) {
+			return "Error in reservation: Reservation dates" + " for update must be future dates";
+
+			/*
+			 * Se a data do Check-Out for antes do Check-in, mostre a mensagem de erro.
+			 */
+		} if (!checkOut.after(checkIn)) {
+			return "Error in reservation: Check-out date must" + "be after check-in date";
+
+			/*
+			 * Caso não ocorra nenhuma das alternativas anteriores, atualiza a nova reserva.
+			 */
+		}
+		
+		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+		
+		
+		//Caso retorne null, é que o programa não teve nem erro anterior
+		return null;
 	}
 
 	/*
