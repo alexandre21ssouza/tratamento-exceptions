@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.DomainExceptions;
 
 /*
  * 
@@ -15,29 +16,24 @@ Comentários são para fins didáticos.
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		System.out.println("Room number: ");
-		Integer roomNumber = sc.nextInt();
-
-		System.out.println("Check-in date (dd/MM/yyyy): ");
-		Date checkIn = sdf.parse(sc.next());
-		System.out.println("Check-out date (dd/MM/yyyy): ");
-		Date checkOut = sdf.parse(sc.next());
-
-		/*
-		 * Se a data do Check-Out for antes do Check-in, mostre a mensagem de erro,
-		 * senão instancia o objeto.
-		 */
-		if (!checkOut.after(checkIn)) {
-			System.out.println("Error in reservation: Check-out date must" + "be after check-in date");
-		} else {
-			Reservation reservation = new Reservation(roomNumber, checkIn, checkOut);
+		try {
+			System.out.println("Room number: ");
+			Integer roomNumber = sc.nextInt();
+			
+			System.out.println("Check-in date (dd/MM/yyyy): ");
+			Date checkIn = sdf.parse(sc.next());
+			System.out.println("Check-out date (dd/MM/yyyy): ");
+			Date checkOut = sdf.parse(sc.next());
+			
+			Reservation reservation = new Reservation(roomNumber, checkIn,
+					checkOut);
 			System.out.println("Reservation: " + reservation);
-
+			
 			// Atualiza data da reserva
 			System.out.println();
 			System.out.println("Enter data to update the reservation: ");
@@ -45,21 +41,26 @@ public class Program {
 			checkIn = sdf.parse(sc.next());
 			System.out.println("Check-out date (dd/MM/yyyy): ");
 			checkOut = sdf.parse(sc.next());
-
-			/*
-			 * As datas de atualização do check-in ou Check-out, não podem ser anteriores a
-			 * data agora(now), tem quer ser posterior a data da nova reserva.
-			 */
 			
-			String error = 	reservation.updateDates(checkIn, checkOut);
-				System.out.println("Reservation: " + reservation);
-				
-				if(error != null) {
-					System.out.println("Error in reservation: " + error);
-				} else {
-					System.out.println("Reservation: " + reservation);
-			}
+			
+			reservation.updateDates(checkIn, checkOut);
+			System.out.println("Reservation: " + reservation);
+		
+			
+			
+			//Trata se o formato da data inserida é inválido
+		} catch(ParseException e) {
+			System.out.println("Invalid date format");
+			
+			
+			
+			/*Caso as datas da atualização inseridos sejam inválidos
+			 *  cai nessa exception*/
+		} catch(DomainExceptions e) {
+			System.out.println("Error in reservation: " + e.getMessage());
+			
 		}
+
 
 		sc.close();
 	}

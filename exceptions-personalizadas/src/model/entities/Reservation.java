@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exceptions.DomainExceptions;
+
 public class Reservation {
 	
 	private Integer roomNumber;
@@ -12,11 +14,21 @@ public class Reservation {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); 
 	
+	//Construtor sem parâmetros
 	public Reservation() {
 		
 	}
 
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+	//Construtor com parâmetros
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DomainExceptions {
+		/* Exception dentro do construtor é programação defensiva!
+		 * Se a data do Check-Out for antes do Check-in, lança 
+		 * esta exceção com essa mensagem de erro.
+		 */	 
+		if (!checkOut.after(checkIn)) {
+				throw new DomainExceptions( "Error in reservation: Check-out date must"
+			+ "be after check-in date");		
+			}
 		
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
@@ -60,30 +72,30 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 	
-	public String updateDates(Date checkIn, Date checkOut) {
+	public void updateDates(Date checkIn, Date checkOut) throws DomainExceptions{
 		
 		Date now = new Date();
 		if (checkIn.before(now) || checkOut.before(now)) {
-			return "Error in reservation: Reservation dates" + " for update must be future dates";
+			throw new DomainExceptions("Error in reservation: Reservation dates" 
+		+ " for update must be future dates");
 
 			/*
-			 * Se a data do Check-Out for antes do Check-in, mostre a mensagem de erro.
-			 */
+			 * Se a data do Check-Out for antes do Check-in, lança 
+			 * esta exceção com essa mensagem de erro.
+			 */		
 		} if (!checkOut.after(checkIn)) {
-			return "Error in reservation: Check-out date must" + "be after check-in date";
+			throw new DomainExceptions( "Error in reservation: Check-out date must"
+		+ "be after check-in date");
 
-			/*
-			 * Caso não ocorra nenhuma das alternativas anteriores, atualiza a nova reserva.
-			 */
-		}
 		
-		
+		}	
+		/*
+		 * Caso não ocorra nenhuma das alternativas anteriores, atualiza a nova reserva.
+		 */
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+	
 		
-		
-		//Caso retorne null, é que o programa não teve nem erro anterior
-		return null;
 	}
 
 	/*
