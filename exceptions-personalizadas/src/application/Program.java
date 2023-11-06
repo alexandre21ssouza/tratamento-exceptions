@@ -50,22 +50,14 @@ public class Program {
 			 * As datas de atualização do check-in ou Check-out, não podem ser anteriores a
 			 * data agora(now), tem quer ser posterior a data da nova reserva.
 			 */
-			Date now = new Date();
-			if (checkIn.before(now) || checkOut.before(now)) {
-				System.out.println("Error in reservation: Reservation dates" + " for update must be future dates");
-
-				/*
-				 * Se a data do Check-Out for antes do Check-in, mostre a mensagem de erro.
-				 */
-			} else if (!checkOut.after(checkIn)) {
-				System.out.println("Error in reservation: Check-out date must" + "be after check-in date");
-
-				/*
-				 * Caso não ocorra nenhuma das alternativas anteriores, atualiza a nova reserva.
-				 */
-			} else {
-				reservation.updateDates(checkIn, checkOut);
+			
+			String error = 	reservation.updateDates(checkIn, checkOut);
 				System.out.println("Reservation: " + reservation);
+				
+				if(error != null) {
+					System.out.println("Error in reservation: " + error);
+				} else {
+					System.out.println("Reservation: " + reservation);
 			}
 		}
 
